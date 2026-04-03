@@ -3,1127 +3,340 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Virdi Transport — Built to Move</title>
+<title>Virdi Transport</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,700;0,900;1,900&family=Archivo+Black&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --amber: #E8820C;
-    --amber-glow: #FF9A1F;
-    --steel: #0D0F14;
-    --steel-mid: #161A22;
-    --steel-light: #1F2530;
-    --chrome: #8A9BB0;
-    --white: #F0EDE8;
-    --dim: #5A6475;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: auto; }
-
-  body {
-    background: var(--steel);
-    color: var(--white);
-    font-family: 'DM Mono', monospace;
-    overflow-x: hidden;
-    cursor: none;
-  }
-
-  /* ── CUSTOM CURSOR ── */
-  #cursor {
-    position: fixed; top: 0; left: 0;
-    width: 12px; height: 12px;
-    background: var(--amber);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    transition: transform 0.1s, width 0.25s, height 0.25s, background 0.25s;
-    mix-blend-mode: exclusion;
-  }
-  #cursor-ring {
-    position: fixed; top: 0; left: 0;
-    width: 40px; height: 40px;
-    border: 1px solid rgba(232,130,12,0.5);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%, -50%);
-    transition: transform 0.08s linear;
-  }
-  body:hover #cursor { opacity: 1; }
-
-  /* ── NAV ── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 28px 60px;
-    mix-blend-mode: normal;
-  }
-  nav::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(to bottom, rgba(13,15,20,0.9) 0%, transparent 100%);
-    pointer-events: none;
-  }
-  .nav-logo {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: 1.5rem;
-    letter-spacing: 0.08em;
-    color: var(--white);
-    text-transform: uppercase;
-    position: relative;
-  }
-  .nav-logo span { color: var(--amber); }
-  .nav-links {
-    display: flex; gap: 40px;
-    list-style: none;
-    position: relative;
-  }
-  .nav-links a {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--chrome);
-    text-decoration: none;
-    transition: color 0.3s;
-  }
-  .nav-links a:hover { color: var(--amber); }
-  .nav-cta {
-    position: relative;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 0.85rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--steel);
-    background: var(--amber);
-    padding: 10px 28px;
-    border: none;
-    cursor: none;
-    transition: background 0.3s, transform 0.2s;
-  }
-  .nav-cta:hover { background: var(--amber-glow); transform: translateY(-1px); }
-
-  /* ── HERO VIDEO SCRUB ── */
-  #hero {
-    position: relative;
-    height: 500vh; /* tall scroll track */
-  }
-  #hero-sticky {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    width: 100%;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  #hero-video {
-    position: absolute;
-    inset: 0;
-    width: 100%; height: 100%;
-    object-fit: cover;
-    will-change: transform;
-  }
-  /* Grain overlay */
-  #hero-sticky::after {
-    content: '';
-    position: absolute; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 3;
-    opacity: 0.6;
-  }
-  .hero-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(
-      135deg,
-      rgba(13,15,20,0.65) 0%,
-      rgba(13,15,20,0.1) 50%,
-      rgba(13,15,20,0.5) 100%
-    );
-    z-index: 2;
-  }
-  .hero-content {
-    position: relative;
-    z-index: 4;
-    text-align: left;
-    padding: 0 60px;
-    max-width: 900px;
-    align-self: flex-end;
-    padding-bottom: 100px;
-    width: 100%;
-  }
-  .hero-eyebrow {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.68rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--amber);
-    margin-bottom: 20px;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeUp 1s 0.3s forwards;
-  }
-  .hero-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: clamp(5rem, 12vw, 11rem);
-    line-height: 0.88;
-    text-transform: uppercase;
-    letter-spacing: -0.01em;
-    color: var(--white);
-    opacity: 0;
-    transform: translateY(40px);
-    animation: fadeUp 1s 0.5s forwards;
-  }
-  .hero-title em {
-    font-style: italic;
-    color: var(--amber);
-    -webkit-text-stroke: 0px;
-  }
-  .hero-title .outline {
-    -webkit-text-stroke: 2px var(--white);
-    color: transparent;
-  }
-  .hero-sub {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.8rem;
-    color: var(--chrome);
-    margin-top: 32px;
-    max-width: 400px;
-    line-height: 1.8;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeUp 1s 0.8s forwards;
-  }
-  .scroll-hint {
-    position: absolute;
-    bottom: 40px;
-    right: 60px;
-    z-index: 4;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    opacity: 0;
-    animation: fadeUp 1s 1.2s forwards;
-  }
-  .scroll-hint span {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--dim);
-    writing-mode: vertical-rl;
-  }
-  .scroll-line {
-    width: 1px;
-    height: 60px;
-    background: linear-gradient(to bottom, var(--amber), transparent);
-    animation: scrollPulse 2s ease-in-out infinite;
-  }
-
-  /* Progress bar */
-  #video-progress {
-    position: fixed;
-    bottom: 0; left: 0;
-    height: 3px;
-    background: var(--amber);
-    z-index: 200;
-    width: 0%;
-    transition: width 0.05s linear;
-    box-shadow: 0 0 12px var(--amber);
-  }
-
-  @keyframes fadeUp {
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes scrollPulse {
-    0%, 100% { opacity: 0.4; transform: scaleY(1); }
-    50% { opacity: 1; transform: scaleY(1.1); }
-  }
-
-  /* ── TICKER ── */
-  .ticker-wrap {
-    background: var(--amber);
-    padding: 14px 0;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-  .ticker-inner {
-    display: inline-flex;
-    animation: ticker 25s linear infinite;
-  }
-  .ticker-inner span {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--steel);
-    padding: 0 40px;
-  }
-  .ticker-inner span::before {
-    content: '◆';
-    margin-right: 40px;
-    color: rgba(13,15,20,0.4);
-  }
-  @keyframes ticker {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
-
-  /* ── STATS ── */
-  .stats-section {
-    background: var(--steel-mid);
-    padding: 120px 60px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    position: relative;
-  }
-  .stats-section::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 60px; right: 60px;
-    height: 1px;
-    background: linear-gradient(to right, transparent, var(--amber), transparent);
-  }
-  .stats-left {
-    padding-right: 80px;
-    border-right: 1px solid rgba(255,255,255,0.05);
-  }
-  .section-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--amber);
-    margin-bottom: 24px;
-  }
-  .stats-heading {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 800;
-    font-size: clamp(3rem, 6vw, 5.5rem);
-    line-height: 0.92;
-    text-transform: uppercase;
-  }
-  .stats-heading .muted { color: var(--dim); }
-  .stats-grid {
-    padding-left: 80px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 60px 40px;
-    align-content: center;
-  }
-  .stat-item {}
-  .stat-num {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: 4.5rem;
-    line-height: 1;
-    color: var(--white);
-    display: flex;
-    align-items: flex-start;
-  }
-  .stat-num sup {
-    font-size: 1.5rem;
-    color: var(--amber);
-    margin-top: 8px;
-    margin-left: 2px;
-    font-family: 'Barlow Condensed', sans-serif;
-  }
-  .stat-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    color: var(--dim);
-    text-transform: uppercase;
-    margin-top: 8px;
-  }
-
-  /* ── SERVICES ── */
-  .services-section {
-    padding: 120px 60px;
-    background: var(--steel);
-    position: relative;
-    overflow: hidden;
-  }
-  .services-section::before {
-    content: 'SERVICES';
-    position: absolute;
-    right: -20px; top: 60px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: 18vw;
-    color: rgba(255,255,255,0.015);
-    white-space: nowrap;
-    pointer-events: none;
-    line-height: 1;
-    text-transform: uppercase;
-  }
-  .services-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 80px;
-  }
-  .services-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: clamp(3rem, 7vw, 6rem);
-    line-height: 0.9;
-    text-transform: uppercase;
-  }
-  .services-title .amber { color: var(--amber); }
-  .services-desc {
-    font-size: 0.72rem;
-    color: var(--chrome);
-    line-height: 1.9;
-    max-width: 300px;
-    text-align: right;
-  }
-  .services-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-  .service-item {
-    display: grid;
-    grid-template-columns: 80px 1fr auto;
-    align-items: center;
-    padding: 36px 0;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    gap: 40px;
-    transition: background 0.3s;
-    position: relative;
-    overflow: hidden;
-  }
-  .service-item::after {
-    content: '';
-    position: absolute;
-    left: 0; bottom: 0; right: 0;
-    height: 1px;
-    background: var(--amber);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s cubic-bezier(0.76, 0, 0.24, 1);
-  }
-  .service-item:hover::after { transform: scaleX(1); }
-  .service-num {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    color: var(--amber);
-    letter-spacing: 0.1em;
-  }
-  .service-name {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 2rem;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-    transition: color 0.3s;
-  }
-  .service-item:hover .service-name { color: var(--amber); }
-  .service-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--dim);
-    border: 1px solid rgba(255,255,255,0.1);
-    padding: 6px 16px;
-  }
-
-  /* ── MARQUEE DIVIDER ── */
-  .marquee-section {
-    padding: 60px 0;
-    background: var(--steel-light);
-    overflow: hidden;
-  }
-  .marquee-track {
-    display: flex;
-    gap: 60px;
-    animation: marqueeLeft 30s linear infinite;
-    width: max-content;
-  }
-  .marquee-item {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 800;
-    font-size: 3.5rem;
-    text-transform: uppercase;
-    color: transparent;
-    -webkit-text-stroke: 1px rgba(255,255,255,0.15);
-    white-space: nowrap;
-    letter-spacing: 0.04em;
-  }
-  .marquee-item.filled {
-    color: var(--white);
-    -webkit-text-stroke: 0;
-  }
-  @keyframes marqueeLeft {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
-
-  /* ── ABOUT / FLEET ── */
-  .about-section {
-    padding: 140px 60px;
-    background: var(--steel-mid);
-    display: grid;
-    grid-template-columns: 1fr 1.2fr;
-    gap: 100px;
-    align-items: center;
-    position: relative;
-  }
-  .about-num {
-    position: absolute;
-    top: 60px; right: 60px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: 20vw;
-    color: rgba(255,255,255,0.02);
-    line-height: 1;
-    pointer-events: none;
-  }
-  .about-content {}
-  .about-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: clamp(3.5rem, 7vw, 6.5rem);
-    text-transform: uppercase;
-    line-height: 0.88;
-    margin-bottom: 40px;
-  }
-  .about-title .accent { color: var(--amber); }
-  .about-body {
-    font-size: 0.72rem;
-    color: var(--chrome);
-    line-height: 2;
-    margin-bottom: 40px;
-  }
-  .about-body p + p { margin-top: 16px; }
-  .about-link {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--amber);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    transition: gap 0.3s;
-  }
-  .about-link:hover { gap: 20px; }
-  .about-link::after { content: '→'; }
-  .about-visual {
-    position: relative;
-    height: 500px;
-    background: var(--steel-light);
-    overflow: hidden;
-  }
-  .about-visual::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, var(--amber) 0%, transparent 60%);
-    opacity: 0.1;
-  }
-  .fleet-grid {
-    position: absolute; inset: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1px;
-    background: rgba(255,255,255,0.04);
-  }
-  .fleet-cell {
-    background: var(--steel-light);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 30px;
-    transition: background 0.3s;
-  }
-  .fleet-cell:hover { background: var(--steel); }
-  .fleet-cell-content { text-align: center; }
-  .fleet-icon {
-    font-size: 2rem;
-    margin-bottom: 12px;
-    display: block;
-  }
-  .fleet-type {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 1.1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 6px;
-  }
-  .fleet-detail {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
-    color: var(--dim);
-    letter-spacing: 0.1em;
-  }
-  .amber-border-top {
-    border-top: 2px solid var(--amber);
-  }
-
-  /* ── CTA ── */
-  .cta-section {
-    padding: 160px 60px;
-    background: var(--steel);
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .cta-section::before {
-    content: '';
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(232,130,12,0.08) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .cta-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.25em;
-    color: var(--amber);
-    text-transform: uppercase;
-    margin-bottom: 32px;
-    display: block;
-  }
-  .cta-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: clamp(4rem, 10vw, 9rem);
-    text-transform: uppercase;
-    line-height: 0.88;
-    margin-bottom: 60px;
-  }
-  .cta-title .stroke {
-    -webkit-text-stroke: 2px rgba(240,237,232,0.4);
-    color: transparent;
-  }
-  .cta-buttons {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-  }
-  .btn-primary {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 0.95rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    background: var(--amber);
-    color: var(--steel);
-    border: none;
-    padding: 18px 50px;
-    cursor: none;
-    transition: background 0.3s, transform 0.2s;
-  }
-  .btn-primary:hover { background: var(--amber-glow); transform: translateY(-2px); }
-  .btn-secondary {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 0.95rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    background: transparent;
-    color: var(--white);
-    border: 1px solid rgba(255,255,255,0.2);
-    padding: 18px 50px;
-    cursor: none;
-    transition: border-color 0.3s, transform 0.2s;
-  }
-  .btn-secondary:hover { border-color: var(--amber); color: var(--amber); transform: translateY(-2px); }
-
-  /* ── FOOTER ── */
-  footer {
-    background: var(--steel-mid);
-    border-top: 1px solid rgba(255,255,255,0.05);
-    padding: 60px 60px 40px;
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: start;
-    gap: 40px;
-  }
-  .footer-logo {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: 2rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-  .footer-logo span { color: var(--amber); }
-  .footer-tagline {
-    font-size: 0.65rem;
-    color: var(--dim);
-    letter-spacing: 0.1em;
-    margin-top: 8px;
-  }
-  .footer-nav {
-    display: flex;
-    gap: 40px;
-    list-style: none;
-    align-self: center;
-  }
-  .footer-nav a {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--dim);
-    text-decoration: none;
-    transition: color 0.3s;
-  }
-  .footer-nav a:hover { color: var(--amber); }
-  .footer-right {
-    text-align: right;
-  }
-  .footer-contact {
-    font-size: 0.65rem;
-    color: var(--dim);
-    letter-spacing: 0.1em;
-    line-height: 2;
-  }
-  .footer-copy {
-    font-size: 0.6rem;
-    color: rgba(90,100,117,0.5);
-    margin-top: 8px;
-  }
-  .footer-bottom {
-    grid-column: 1 / -1;
-    border-top: 1px solid rgba(255,255,255,0.04);
-    padding-top: 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .footer-bottom p {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
-    color: rgba(90,100,117,0.4);
-    letter-spacing: 0.1em;
-  }
-
-  /* ── SCROLL REVEAL ── */
-  .reveal {
-    opacity: 0;
-    transform: translateY(50px);
-    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  .reveal-delay-1 { transition-delay: 0.1s; }
-  .reveal-delay-2 { transition-delay: 0.2s; }
-  .reveal-delay-3 { transition-delay: 0.35s; }
-  .reveal-delay-4 { transition-delay: 0.5s; }
-
-  /* Stat counter */
-  .count { display: inline-block; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0B0B0B;--ink2:#111111;--paper:#EDEDED;--paper2:#D8D8D8;
+  --rule:rgba(237,237,237,0.08);--rule2:rgba(237,237,237,0.18);
+  --orange:#E05C00;--dim:rgba(237,237,237,0.35);--dimmer:rgba(237,237,237,0.12);
+}
+html{scroll-behavior:auto}
+body{background:var(--ink);color:var(--paper);font-family:'IBM Plex Mono',monospace;overflow-x:hidden;cursor:none}
+#cur{position:fixed;width:8px;height:8px;background:var(--paper);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s}
+#cur-r{position:fixed;width:36px;height:36px;border:1px solid rgba(237,237,237,0.25);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%)}
+nav{position:fixed;top:0;left:0;right:0;z-index:500;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 48px;height:64px;border-bottom:1px solid var(--rule);background:rgba(11,11,11,0.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.nav-left{display:flex;align-items:center;gap:40px}
+.nav-logo{font-family:'Archivo Black',sans-serif;font-size:1rem;letter-spacing:.06em;text-transform:uppercase;color:var(--paper)}
+.nav-logo b{color:var(--orange);font-weight:inherit}
+.nav-links{display:flex;gap:32px;list-style:none}
+.nav-links a{font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);text-decoration:none;transition:color .25s}
+.nav-links a:hover{color:var(--paper)}
+.nav-center{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.2em;color:var(--dimmer);text-transform:uppercase;text-align:center}
+.nav-right{display:flex;justify-content:flex-end}
+.nav-btn{font-family:'Archivo',sans-serif;font-weight:700;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);background:var(--paper);border:none;padding:10px 24px;cursor:none;transition:background .2s,color .2s}
+.nav-btn:hover{background:var(--orange);color:var(--paper)}
+/* HERO */
+#hero-track{position:relative;height:600vh}
+#hero-pin{position:sticky;top:0;height:100vh;width:100%;overflow:hidden;display:flex;align-items:flex-end}
+#hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero-veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,11,11,.78) 0%,transparent 55%),linear-gradient(to right,rgba(11,11,11,.5) 0%,transparent 60%);z-index:2}
+.hero-grid{position:absolute;inset:0;z-index:2;background-image:linear-gradient(to right,rgba(237,237,237,.025) 1px,transparent 1px),linear-gradient(to bottom,rgba(237,237,237,.025) 1px,transparent 1px);background-size:calc(100%/6) calc(100%/6);pointer-events:none}
+.hero-ui{position:relative;z-index:4;width:100%;padding:0 48px 52px;display:grid;grid-template-columns:1fr auto;align-items:flex-end;gap:40px}
+.hero-tag{font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--orange);margin-bottom:18px;opacity:0;animation:up .8s .2s forwards}
+.hero-h1{font-family:'Archivo Black',sans-serif;font-size:clamp(5.5rem,13vw,13rem);line-height:.88;text-transform:uppercase;letter-spacing:-.02em;color:var(--paper);opacity:0;animation:up .9s .4s forwards}
+.hero-h1 i{font-style:italic;font-family:'Archivo',sans-serif;font-weight:900;color:var(--orange)}
+.hero-h1 .ghost{color:transparent;-webkit-text-stroke:1.5px rgba(237,237,237,.5)}
+.hero-right{text-align:right;opacity:0;animation:up .8s .7s forwards}
+.hero-sub{font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--dim);line-height:1.9;max-width:260px;margin-left:auto;margin-bottom:28px}
+.hero-coords{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.1em;color:var(--dimmer);text-transform:uppercase}
+.scroll-cue{position:absolute;bottom:52px;right:48px;z-index:4;display:flex;flex-direction:column;align-items:center;gap:10px;opacity:0;animation:up .8s 1s forwards}
+.scroll-cue-label{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dimmer);writing-mode:vertical-rl}
+.scroll-cue-line{width:1px;height:48px;background:linear-gradient(to bottom,var(--orange),transparent);animation:pulse 2s ease-in-out infinite}
+#scrub-bar{position:fixed;top:64px;left:0;height:2px;width:0%;background:var(--orange);z-index:600;box-shadow:0 0 10px rgba(224,92,0,.7)}
+@keyframes up{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+/* TAPE */
+.tape{background:var(--paper);padding:13px 0;overflow:hidden;white-space:nowrap}
+.tape-inner{display:inline-flex;animation:tape 22s linear infinite}
+.tape-item{font-family:'Archivo',sans-serif;font-weight:700;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);padding:0 48px;border-right:1px solid rgba(11,11,11,.15)}
+.tape-item.accent{color:var(--orange)}
+@keyframes tape{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* NUMBERS */
+.numbers{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--rule2);border-bottom:1px solid var(--rule2)}
+.num-cell{padding:64px 48px;border-right:1px solid var(--rule2);position:relative}
+.num-cell:last-child{border-right:none}
+.num-cell::before{content:attr(data-index);position:absolute;top:24px;left:48px;font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.2em;color:var(--dimmer)}
+.num-val{font-family:'Archivo Black',sans-serif;font-size:clamp(3rem,5vw,5.5rem);line-height:1;color:var(--paper);display:flex;align-items:flex-start;gap:4px}
+.num-val sup{font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:1rem;color:var(--orange);margin-top:10px}
+.num-label{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-top:12px}
+/* SERVICES */
+.services{padding:120px 48px;display:grid;grid-template-columns:340px 1fr;gap:80px;align-items:start}
+.services-sticky{position:sticky;top:100px}
+.section-tag{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--orange);margin-bottom:20px;display:block}
+.section-h{font-family:'Archivo Black',sans-serif;font-size:clamp(2.8rem,4.5vw,4.5rem);line-height:.9;text-transform:uppercase;letter-spacing:-.01em}
+.section-h .muted{color:var(--dim)}
+.services-note{font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:var(--dim);line-height:1.9;margin-top:28px}
+.svc-row{display:grid;grid-template-columns:56px 1fr auto;align-items:center;gap:28px;padding:32px 0;border-bottom:1px solid var(--rule);cursor:none;position:relative;overflow:hidden}
+.svc-row::before{content:'';position:absolute;left:0;bottom:-1px;right:0;height:1px;background:var(--paper);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.76,0,.24,1)}
+.svc-row:hover::before{transform:scaleX(1)}
+.svc-row:first-child{border-top:1px solid var(--rule)}
+.svc-n{font-family:'IBM Plex Mono',monospace;font-size:.58rem;color:var(--orange);letter-spacing:.1em}
+.svc-name{font-family:'Archivo',sans-serif;font-weight:900;font-size:1.6rem;text-transform:uppercase;letter-spacing:.01em;transition:color .3s}
+.svc-row:hover .svc-name{color:var(--orange)}
+.svc-badge{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dimmer);border:1px solid var(--rule2);padding:5px 14px;white-space:nowrap}
+/* MARQUEE */
+.mq-wrap{overflow:hidden;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:40px 0}
+.mq-inner{display:flex;width:max-content;animation:mq 40s linear infinite}
+.mq-item{font-family:'Archivo Black',sans-serif;font-size:clamp(3rem,6vw,5rem);text-transform:uppercase;letter-spacing:-.01em;color:transparent;-webkit-text-stroke:1px rgba(237,237,237,.12);padding:0 48px;white-space:nowrap}
+.mq-item.solid{color:var(--paper);-webkit-text-stroke:none}
+.mq-sep{font-family:'IBM Plex Mono',monospace;font-size:2rem;color:var(--orange);align-self:center;padding:0 24px}
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* FLEET */
+.fleet{padding:120px 48px;border-top:1px solid var(--rule2)}
+.fleet-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:64px}
+.fleet-note{font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:var(--dim);line-height:1.9;max-width:280px;text-align:right}
+.fleet-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule2)}
+.f-card{background:var(--ink2);padding:48px 36px;transition:background .3s;cursor:none}
+.f-card:hover{background:#161616}
+.f-card-top{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:48px}
+.f-card-icon{font-size:2.2rem;margin-bottom:20px;display:block;filter:grayscale(.3)}
+.f-card-name{font-family:'Archivo',sans-serif;font-weight:900;font-size:1.3rem;text-transform:uppercase;margin-bottom:8px}
+.f-card-sub{font-family:'IBM Plex Mono',monospace;font-size:.58rem;color:var(--dim);letter-spacing:.1em}
+.f-card.featured{border-top:2px solid var(--orange)}
+/* ABOUT */
+.about-strip{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--rule2);border-bottom:1px solid var(--rule2);min-height:520px}
+.about-left{padding:80px 48px;border-right:1px solid var(--rule2);display:flex;flex-direction:column;justify-content:space-between}
+.about-headline{font-family:'Archivo Black',sans-serif;font-size:clamp(3rem,5vw,5rem);text-transform:uppercase;line-height:.9;letter-spacing:-.01em}
+.about-headline span{color:var(--orange);display:block}
+.about-cta{display:inline-flex;align-items:center;gap:14px;font-family:'Archivo',sans-serif;font-weight:700;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--paper);text-decoration:none;transition:color .25s,gap .3s;padding-bottom:6px;border-bottom:1px solid var(--rule2);width:fit-content}
+.about-cta:hover{color:var(--orange);gap:24px;border-color:var(--orange)}
+.about-right{padding:80px 48px;display:flex;flex-direction:column;gap:36px}
+.about-body{font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--dim);line-height:2}
+.about-meta{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.meta-key{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dimmer);margin-bottom:6px}
+.meta-val{font-family:'Archivo',sans-serif;font-weight:700;font-size:.85rem;color:var(--paper)}
+/* CTA */
+.cta-block{padding:160px 48px;display:grid;grid-template-columns:1fr auto;align-items:flex-end;gap:60px;border-top:1px solid var(--rule2)}
+.cta-h{font-family:'Archivo Black',sans-serif;font-size:clamp(5rem,11vw,11rem);text-transform:uppercase;line-height:.88;letter-spacing:-.02em}
+.cta-h .ghost{color:transparent;-webkit-text-stroke:1.5px rgba(237,237,237,.2)}
+.cta-h .lit{color:var(--orange)}
+.cta-right{display:flex;flex-direction:column;gap:12px;align-items:flex-end}
+.btn-main{font-family:'Archivo',sans-serif;font-weight:900;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;background:var(--paper);color:var(--ink);border:none;padding:18px 48px;cursor:none;transition:background .2s,color .2s;white-space:nowrap}
+.btn-main:hover{background:var(--orange);color:var(--paper)}
+.btn-ghost{font-family:'Archivo',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;background:transparent;color:var(--dim);border:1px solid var(--rule2);padding:18px 48px;cursor:none;transition:color .2s,border-color .2s;white-space:nowrap}
+.btn-ghost:hover{color:var(--paper);border-color:var(--paper)}
+/* FOOTER */
+footer{border-top:1px solid var(--rule2);padding:48px;display:grid;grid-template-columns:1fr auto 1fr;row-gap:32px}
+.foot-logo{font-family:'Archivo Black',sans-serif;font-size:1.1rem;letter-spacing:.04em;text-transform:uppercase}
+.foot-logo b{color:var(--orange);font-weight:inherit}
+.foot-tag{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.15em;color:var(--dimmer);margin-top:6px}
+.foot-nav{display:flex;gap:32px;list-style:none;align-self:center;justify-self:center}
+.foot-nav a{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);text-decoration:none;transition:color .25s}
+.foot-nav a:hover{color:var(--orange)}
+.foot-right{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:.58rem;color:var(--dim);line-height:2;letter-spacing:.08em}
+.foot-bottom{grid-column:1/-1;border-top:1px solid var(--rule);padding-top:24px;display:flex;justify-content:space-between;align-items:center}
+.foot-bottom p{font-family:'IBM Plex Mono',monospace;font-size:.52rem;letter-spacing:.12em;color:var(--dimmer)}
+.foot-dot{color:var(--orange)}
+/* REVEAL */
+.rv{opacity:0;transform:translateY(36px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+.rv.in{opacity:1;transform:none}
+.rv.d1{transition-delay:.08s}.rv.d2{transition-delay:.18s}.rv.d3{transition-delay:.3s}.rv.d4{transition-delay:.44s}
 </style>
 </head>
-
 <body>
+<div id="cur"></div>
+<div id="cur-r"></div>
+<div id="scrub-bar"></div>
 
-<!-- Custom Cursor -->
-<div id="cursor"></div>
-<div id="cursor-ring"></div>
-
-<!-- Progress Bar -->
-<div id="video-progress"></div>
-
-<!-- Nav -->
 <nav>
-  <div class="nav-logo">VIRDI <span>TRANSPORT</span></div>
-  <ul class="nav-links">
-    <li><a href="#services">Services</a></li>
-    <li><a href="#fleet">Fleet</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-  <button class="nav-cta">Get a Quote</button>
+  <div class="nav-left">
+    <div class="nav-logo">VIRDI <b>TRANSPORT</b></div>
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#fleet">Fleet</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+  </div>
+  <div class="nav-center">29°46′N · 95°22′W · Houston TX</div>
+  <div class="nav-right"><button class="nav-btn">Get a Quote</button></div>
 </nav>
 
-<!-- HERO – Video Scrub -->
-<section id="hero">
-  <div id="hero-sticky">
-    <video
-      id="hero-video"
-      src="virdi_hero.mp4"
-      muted
-      playsinline
-      preload="auto"
-      disablePictureInPicture
-    ></video>
-    <div class="hero-overlay"></div>
-
-    <div class="hero-content">
-      <p class="hero-eyebrow">Trusted Freight &amp; Logistics — Texas &amp; Beyond</p>
-      <h1 class="hero-title">
-        Built<br>
-        <em>To</em><br>
-        <span class="outline">Move.</span>
-      </h1>
-      <p class="hero-sub">From first mile to final delivery — Virdi Transport keeps commerce flowing across North America.</p>
+<section id="hero-track">
+  <div id="hero-pin">
+    <video id="hero-vid" src="virdi_hero.mp4" muted playsinline preload="auto" disablepictureinpicture webkit-playsinline></video>
+    <div class="hero-veil"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-ui">
+      <div class="hero-left">
+        <p class="hero-tag">Freight &amp; Logistics — North America</p>
+        <h1 class="hero-h1">BUILT<br><i>TO</i><br><span class="ghost">MOVE.</span></h1>
+      </div>
+      <div class="hero-right">
+        <p class="hero-sub">From first mile to final delivery —<br>Virdi Transport keeps commerce<br>moving across North America.</p>
+        <p class="hero-coords">DOT #000000 &nbsp;|&nbsp; MC #000000</p>
+      </div>
     </div>
-
-    <div class="scroll-hint">
-      <span>Scroll</span>
-      <div class="scroll-line"></div>
+    <div class="scroll-cue">
+      <div class="scroll-cue-line"></div>
+      <span class="scroll-cue-label">Scroll</span>
     </div>
   </div>
 </section>
 
-<!-- Ticker -->
-<div class="ticker-wrap">
-  <div class="ticker-inner">
-    <span>Virdi Transport</span>
-    <span>Full Truckload</span>
-    <span>LTL Freight</span>
-    <span>Flatbed Hauling</span>
-    <span>Dedicated Lanes</span>
-    <span>Expedited Shipping</span>
-    <span>Texas &amp; Nationwide</span>
-    <span>Virdi Transport</span>
-    <span>Full Truckload</span>
-    <span>LTL Freight</span>
-    <span>Flatbed Hauling</span>
-    <span>Dedicated Lanes</span>
-    <span>Expedited Shipping</span>
-    <span>Texas &amp; Nationwide</span>
+<div class="tape">
+  <div class="tape-inner">
+    <span class="tape-item">Virdi Transport</span><span class="tape-item accent">Full Truckload</span><span class="tape-item">LTL Freight</span><span class="tape-item accent">Flatbed</span><span class="tape-item">Refrigerated</span><span class="tape-item accent">Expedited</span><span class="tape-item">Dedicated Lanes</span><span class="tape-item accent">Texas &amp; Nationwide</span><span class="tape-item">Virdi Transport</span><span class="tape-item accent">Full Truckload</span><span class="tape-item">LTL Freight</span><span class="tape-item accent">Flatbed</span><span class="tape-item">Refrigerated</span><span class="tape-item accent">Expedited</span><span class="tape-item">Dedicated Lanes</span><span class="tape-item accent">Texas &amp; Nationwide</span>
   </div>
 </div>
 
-<!-- Stats -->
-<section class="stats-section" id="about">
-  <div class="stats-left">
-    <p class="section-label reveal">// Company Overview</p>
-    <h2 class="stats-heading reveal reveal-delay-1">
-      Road<br>
-      <span class="muted">Tested.</span><br>
-      Proven.
-    </h2>
-  </div>
-  <div class="stats-grid">
-    <div class="stat-item reveal">
-      <div class="stat-num"><span class="count" data-target="15">0</span><sup>+</sup></div>
-      <div class="stat-label">Years Operating</div>
-    </div>
-    <div class="stat-item reveal reveal-delay-1">
-      <div class="stat-num"><span class="count" data-target="250">0</span><sup>+</sup></div>
-      <div class="stat-label">Active Trucks</div>
-    </div>
-    <div class="stat-item reveal reveal-delay-2">
-      <div class="stat-num"><span class="count" data-target="48">0</span></div>
-      <div class="stat-label">States Covered</div>
-    </div>
-    <div class="stat-item reveal reveal-delay-3">
-      <div class="stat-num"><span class="count" data-target="99">0</span><sup>%</sup></div>
-      <div class="stat-label">On-Time Delivery</div>
-    </div>
-  </div>
-</section>
-
-<!-- Marquee -->
-<div class="marquee-section">
-  <div class="marquee-track">
-    <span class="marquee-item filled">Long Haul</span>
-    <span class="marquee-item">Flatbed</span>
-    <span class="marquee-item filled">Refrigerated</span>
-    <span class="marquee-item">Dry Van</span>
-    <span class="marquee-item filled">Oversized</span>
-    <span class="marquee-item">Expedited</span>
-    <span class="marquee-item filled">Long Haul</span>
-    <span class="marquee-item">Flatbed</span>
-    <span class="marquee-item filled">Refrigerated</span>
-    <span class="marquee-item">Dry Van</span>
-    <span class="marquee-item filled">Oversized</span>
-    <span class="marquee-item">Expedited</span>
-  </div>
+<div class="numbers">
+  <div class="num-cell rv" data-index="01 //"><div class="num-val"><span class="cnt" data-t="15">0</span><sup>+</sup></div><div class="num-label">Years in Operation</div></div>
+  <div class="num-cell rv d1" data-index="02 //"><div class="num-val"><span class="cnt" data-t="250">0</span><sup>+</sup></div><div class="num-label">Active Trucks</div></div>
+  <div class="num-cell rv d2" data-index="03 //"><div class="num-val"><span class="cnt" data-t="48">0</span></div><div class="num-label">States Covered</div></div>
+  <div class="num-cell rv d3" data-index="04 //"><div class="num-val"><span class="cnt" data-t="99">0</span><sup>%</sup></div><div class="num-label">On-Time Delivery</div></div>
 </div>
 
-<!-- Services -->
-<section class="services-section" id="services">
-  <div class="services-header">
-    <div>
-      <p class="section-label reveal">// What We Do</p>
-      <h2 class="services-title reveal reveal-delay-1">
-        Our<br>
-        <span class="amber">Services</span>
-      </h2>
-    </div>
-    <p class="services-desc reveal reveal-delay-2">
-      Every load is handled with precision, every route optimized for speed and safety.
-    </p>
+<section class="services" id="services">
+  <div class="services-sticky">
+    <span class="section-tag rv">// Services</span>
+    <h2 class="section-h rv d1">WHAT<br><span class="muted">WE DO</span></h2>
+    <p class="services-note rv d2">Every load handled with engineering precision. Every route optimized for speed, safety, and reliability.</p>
   </div>
-  <div class="services-list">
-    <div class="service-item reveal">
-      <span class="service-num">01</span>
-      <span class="service-name">Full Truckload (FTL)</span>
-      <span class="service-tag">Nationwide</span>
-    </div>
-    <div class="service-item reveal">
-      <span class="service-num">02</span>
-      <span class="service-name">Less Than Truckload (LTL)</span>
-      <span class="service-tag">Flexible</span>
-    </div>
-    <div class="service-item reveal">
-      <span class="service-num">03</span>
-      <span class="service-name">Flatbed &amp; Oversized</span>
-      <span class="service-tag">Heavy Haul</span>
-    </div>
-    <div class="service-item reveal">
-      <span class="service-num">04</span>
-      <span class="service-name">Refrigerated Freight</span>
-      <span class="service-tag">Temperature Controlled</span>
-    </div>
-    <div class="service-item reveal">
-      <span class="service-num">05</span>
-      <span class="service-name">Expedited Shipping</span>
-      <span class="service-tag">24/7 Priority</span>
-    </div>
-    <div class="service-item reveal">
-      <span class="service-num">06</span>
-      <span class="service-name">Dedicated Lanes</span>
-      <span class="service-tag">Contract Freight</span>
-    </div>
-  </div>
-</section>
-
-<!-- About / Fleet -->
-<section class="about-section" id="fleet">
-  <div class="about-num">VT</div>
-  <div class="about-content">
-    <p class="section-label reveal">// Our Fleet</p>
-    <h2 class="about-title reveal reveal-delay-1">
-      Power<br>
-      That <span class="accent">Delivers.</span>
-    </h2>
-    <p class="about-body reveal reveal-delay-2">
-      <p>Our modern fleet of Class 8 semi-trucks is maintained to the highest standards — GPS-tracked, ELD-compliant, and ready to move your freight safely and on time.</p>
-      <p>We don't just move loads. We move businesses forward — one delivery at a time.</p>
-    </p>
-    <a class="about-link reveal reveal-delay-3" href="#contact">Partner With Us</a>
-  </div>
-  <div class="about-visual reveal reveal-delay-2">
-    <div class="fleet-grid">
-      <div class="fleet-cell amber-border-top">
-        <div class="fleet-cell-content">
-          <span class="fleet-icon">🚛</span>
-          <div class="fleet-type">Dry Van</div>
-          <div class="fleet-detail">48ft &amp; 53ft</div>
-        </div>
-      </div>
-      <div class="fleet-cell">
-        <div class="fleet-cell-content">
-          <span class="fleet-icon">❄️</span>
-          <div class="fleet-type">Reefer</div>
-          <div class="fleet-detail">Temp Controlled</div>
-        </div>
-      </div>
-      <div class="fleet-cell">
-        <div class="fleet-cell-content">
-          <span class="fleet-icon">🏗️</span>
-          <div class="fleet-type">Flatbed</div>
-          <div class="fleet-detail">Step Deck / RGN</div>
-        </div>
-      </div>
-      <div class="fleet-cell amber-border-top">
-        <div class="fleet-cell-content">
-          <span class="fleet-icon">📡</span>
-          <div class="fleet-type">GPS Tracked</div>
-          <div class="fleet-detail">Real-Time Updates</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<section class="cta-section" id="contact">
-  <span class="cta-tag reveal">// Ready to Ship?</span>
-  <h2 class="cta-title reveal reveal-delay-1">
-    Let's<br>
-    <span class="stroke">Get Moving</span>
-  </h2>
-  <div class="cta-buttons reveal reveal-delay-2">
-    <button class="btn-primary">Request a Quote</button>
-    <button class="btn-secondary">Call Us Now</button>
-  </div>
-</section>
-
-<!-- Footer -->
-<footer>
   <div>
-    <div class="footer-logo">VIRDI <span>TRANSPORT</span></div>
-    <div class="footer-tagline">// Built To Move — Est. 2009</div>
+    <div class="svc-row rv"><span class="svc-n">01</span><span class="svc-name">Full Truckload (FTL)</span><span class="svc-badge">Nationwide</span></div>
+    <div class="svc-row rv"><span class="svc-n">02</span><span class="svc-name">Less Than Truckload</span><span class="svc-badge">Flexible</span></div>
+    <div class="svc-row rv"><span class="svc-n">03</span><span class="svc-name">Flatbed &amp; Oversized</span><span class="svc-badge">Heavy Haul</span></div>
+    <div class="svc-row rv"><span class="svc-n">04</span><span class="svc-name">Refrigerated Freight</span><span class="svc-badge">Temp Controlled</span></div>
+    <div class="svc-row rv"><span class="svc-n">05</span><span class="svc-name">Expedited Shipping</span><span class="svc-badge">24/7 Priority</span></div>
+    <div class="svc-row rv"><span class="svc-n">06</span><span class="svc-name">Dedicated Contract Lanes</span><span class="svc-badge">Long-Term</span></div>
   </div>
-  <ul class="footer-nav">
-    <li><a href="#services">Services</a></li>
-    <li><a href="#fleet">Fleet</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-  <div class="footer-right">
-    <div class="footer-contact">
-      Houston, Texas<br>
-      info@virditransport.com<br>
-      (832) 000-0000
+</section>
+
+<div class="mq-wrap">
+  <div class="mq-inner">
+    <span class="mq-item solid">Long Haul</span><span class="mq-sep">×</span><span class="mq-item">Flatbed</span><span class="mq-sep">×</span><span class="mq-item solid">Refrigerated</span><span class="mq-sep">×</span><span class="mq-item">Dry Van</span><span class="mq-sep">×</span><span class="mq-item solid">Oversized</span><span class="mq-sep">×</span><span class="mq-item">Expedited</span><span class="mq-sep">×</span><span class="mq-item solid">Long Haul</span><span class="mq-sep">×</span><span class="mq-item">Flatbed</span><span class="mq-sep">×</span><span class="mq-item solid">Refrigerated</span><span class="mq-sep">×</span><span class="mq-item">Dry Van</span><span class="mq-sep">×</span><span class="mq-item solid">Oversized</span><span class="mq-sep">×</span><span class="mq-item">Expedited</span><span class="mq-sep">×</span>
+  </div>
+</div>
+
+<section class="fleet" id="fleet">
+  <div class="fleet-top">
+    <div><span class="section-tag rv">// Fleet</span><h2 class="section-h rv d1">OUR<br>EQUIPMENT</h2></div>
+    <p class="fleet-note rv d2">Modern Class 8 trucks. GPS-tracked. ELD-compliant. Maintained to exceed federal safety standards.</p>
+  </div>
+  <div class="fleet-cards">
+    <div class="f-card featured rv"><div class="f-card-top">01 // Primary</div><span class="f-card-icon">🚛</span><div class="f-card-name">Dry Van</div><div class="f-card-sub">48ft &amp; 53ft trailers</div></div>
+    <div class="f-card rv d1"><div class="f-card-top">02 //</div><span class="f-card-icon">❄️</span><div class="f-card-name">Refrigerated</div><div class="f-card-sub">Temperature controlled</div></div>
+    <div class="f-card rv d2"><div class="f-card-top">03 //</div><span class="f-card-icon">🏗️</span><div class="f-card-name">Flatbed</div><div class="f-card-sub">Step Deck · RGN · Lowboy</div></div>
+    <div class="f-card featured rv d3"><div class="f-card-top">04 // Tracking</div><span class="f-card-icon">📡</span><div class="f-card-name">GPS Tracked</div><div class="f-card-sub">Real-time load visibility</div></div>
+  </div>
+</section>
+
+<section class="about-strip" id="about">
+  <div class="about-left">
+    <div><span class="section-tag rv">// Company</span><h2 class="about-headline rv d1">POWER<br>THAT<br><span>DELIVERS.</span></h2></div>
+    <a class="about-cta rv d2" href="#contact">Partner with us <span>→</span></a>
+  </div>
+  <div class="about-right">
+    <p class="about-body rv">Virdi Transport has been the backbone of reliable freight movement across Texas and North America for over a decade. We don't just move loads — we move businesses forward, one delivery at a time.<br><br>Our modern fleet is built for the long haul: GPS-tracked, ELD-compliant, and maintained to exceed federal safety standards. When reliability is non-negotiable, shippers trust Virdi.</p>
+    <div class="about-meta rv d2">
+      <div><div class="meta-key">Headquarters</div><div class="meta-val">Houston, TX</div></div>
+      <div><div class="meta-key">Founded</div><div class="meta-val">Est. 2009</div></div>
+      <div><div class="meta-key">Coverage</div><div class="meta-val">48 States</div></div>
+      <div><div class="meta-key">Operation</div><div class="meta-val">24 / 7 / 365</div></div>
     </div>
   </div>
-  <div class="footer-bottom">
-    <p>© 2024 Virdi Transport. All rights reserved.</p>
-    <p>DOT# 000000 | MC# 000000</p>
+</section>
+
+<section class="cta-block" id="contact">
+  <h2 class="cta-h rv">LET'S<br><span class="lit">GET</span><br><span class="ghost">MOVING.</span></h2>
+  <div class="cta-right rv d1">
+    <button class="btn-main">Request a Quote</button>
+    <button class="btn-ghost">Call Us Now</button>
   </div>
+</section>
+
+<footer>
+  <div><div class="foot-logo">VIRDI <b>TRANSPORT</b></div><div class="foot-tag">// Built to Move</div></div>
+  <ul class="foot-nav"><li><a href="#services">Services</a></li><li><a href="#fleet">Fleet</a></li><li><a href="#about">About</a></li><li><a href="#contact">Contact</a></li></ul>
+  <div class="foot-right">Houston, Texas 77001<br>info@virditransport.com<br>(832) 000-0000</div>
+  <div class="foot-bottom"><p>© 2024 Virdi Transport<span class="foot-dot"> · </span>All Rights Reserved</p><p>DOT# 000000 <span class="foot-dot">·</span> MC# 000000</p></div>
 </footer>
 
 <script>
-/* ══════════════════════════════════════
-   CUSTOM CURSOR
-══════════════════════════════════════ */
-const cursor = document.getElementById('cursor');
-const ring = document.getElementById('cursor-ring');
-let mx = 0, my = 0, rx = 0, ry = 0;
-
-document.addEventListener('mousemove', e => {
-  mx = e.clientX; my = e.clientY;
-  cursor.style.left = mx + 'px';
-  cursor.style.top = my + 'px';
+// CURSOR
+const cur=document.getElementById('cur'),curR=document.getElementById('cur-r');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
+(function raf(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(raf)})();
+document.querySelectorAll('a,button,.svc-row,.f-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.width='14px';cur.style.height='14px';cur.style.background='var(--orange)'});
+  el.addEventListener('mouseleave',()=>{cur.style.width='8px';cur.style.height='8px';cur.style.background='var(--paper)'});
 });
 
-(function animRing() {
-  rx += (mx - rx) * 0.12;
-  ry += (my - ry) * 0.12;
-  ring.style.left = rx + 'px';
-  ring.style.top = ry + 'px';
-  requestAnimationFrame(animRing);
+// VIDEO SCRUB
+// Core idea: pause video completely, own currentTime via rAF lerp
+const vid=document.getElementById('hero-vid');
+const track=document.getElementById('hero-track');
+const bar=document.getElementById('scrub-bar');
+
+let targetT=0, currentT=0;
+const LERP=0.07;
+
+// Keep video paused — we control time manually
+function ensurePaused(){if(!vid.paused)vid.pause()}
+vid.addEventListener('play',ensurePaused);
+vid.addEventListener('playing',ensurePaused);
+vid.pause();
+
+// Scroll handler: update target time
+function getProgress(){
+  const h=track.offsetHeight-window.innerHeight;
+  return Math.min(1,Math.max(0,window.scrollY/h));
+}
+window.addEventListener('scroll',function(){
+  const p=getProgress();
+  if(vid.duration&&!isNaN(vid.duration)){
+    targetT=p*vid.duration;
+  }
+  bar.style.width=(p*100)+'%';
+},{passive:true});
+
+// rAF: lerp currentT → targetT, then seek
+(function loop(){
+  currentT+=(targetT-currentT)*LERP;
+  if(vid.readyState>=2){
+    const diff=Math.abs(vid.currentTime-currentT);
+    if(diff>0.005){
+      try{vid.currentTime=currentT}catch(e){}
+    }
+  }
+  requestAnimationFrame(loop);
 })();
 
-document.querySelectorAll('a, button, .service-item').forEach(el => {
-  el.addEventListener('mouseenter', () => {
-    cursor.style.width = '20px';
-    cursor.style.height = '20px';
-  });
-  el.addEventListener('mouseleave', () => {
-    cursor.style.width = '12px';
-    cursor.style.height = '12px';
-  });
+// Once metadata ready, seed duration
+vid.addEventListener('loadedmetadata',function(){
+  targetT=0;currentT=0;
+  try{vid.currentTime=0}catch(e){}
+});
+vid.addEventListener('loadeddata',function(){
+  try{vid.currentTime=0}catch(e){}
 });
 
-/* ══════════════════════════════════════
-   SMOOTH VIDEO SCRUB (NO FRAMES METHOD)
-   Uses video.currentTime + RAF lerp
-══════════════════════════════════════ */
-const video = document.getElementById('hero-video');
-const hero = document.getElementById('hero');
-const progressBar = document.getElementById('video-progress');
+// REVEAL
+const rvObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');rvObs.unobserve(e.target)}});
+},{threshold:0.1});
+document.querySelectorAll('.rv').forEach(el=>rvObs.observe(el));
 
-// Wait for video metadata to be ready
-let videoDuration = 0;
-video.addEventListener('loadedmetadata', () => {
-  videoDuration = video.duration;
-});
-
-// Also try immediate in case already cached
-if (video.readyState >= 1) videoDuration = video.duration;
-
-let targetVideoTime = 0;   // where we want to be
-let currentVideoTime = 0;  // where we smoothly interpolate to
-const LERP_SPEED = 0.08;   // 0 = frozen, 1 = instant — 0.08 is silky
-
-function getScrollProgress() {
-  const heroRect = hero.getBoundingClientRect();
-  const heroTop = hero.offsetTop;
-  const heroHeight = hero.offsetHeight - window.innerHeight;
-  const scrollY = window.scrollY;
-  return Math.max(0, Math.min(1, scrollY / heroHeight));
-}
-
-function updateVideo() {
-  const progress = getScrollProgress();
-  const dur = video.duration || videoDuration || 0;
-  if (dur > 0) {
-    targetVideoTime = progress * dur;
-  }
-  progressBar.style.width = (progress * 100) + '%';
-
-  // Smooth lerp — this is the key to buttery motion
-  currentVideoTime += (targetVideoTime - currentVideoTime) * LERP_SPEED;
-
-  // Only set if meaningfully different (avoids redundant seeks)
-  if (Math.abs(video.currentTime - currentVideoTime) > 0.005) {
-    video.currentTime = currentVideoTime;
-  }
-
-  requestAnimationFrame(updateVideo);
-}
-
-// Start the RAF loop immediately
-requestAnimationFrame(updateVideo);
-
-// Force video to first frame on load
-video.addEventListener('loadeddata', () => {
-  video.currentTime = 0;
-  videoDuration = video.duration;
-});
-
-/* ══════════════════════════════════════
-   SCROLL REVEAL
-══════════════════════════════════════ */
-const revealEls = document.querySelectorAll('.reveal');
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      revealObserver.unobserve(entry.target);
+// COUNTERS
+const cntObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    const el=e.target,target=+el.dataset.t,dur=1600,start=performance.now();
+    function step(now){
+      const t=Math.min((now-start)/dur,1),ease=1-Math.pow(1-t,3);
+      el.textContent=Math.floor(ease*target);
+      if(t<1)requestAnimationFrame(step);else el.textContent=target;
     }
-  });
-}, { threshold: 0.15 });
-revealEls.forEach(el => revealObserver.observe(el));
-
-/* ══════════════════════════════════════
-   COUNTER ANIMATION
-══════════════════════════════════════ */
-const counters = document.querySelectorAll('.count');
-const counterObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (!entry.isIntersecting) return;
-    const el = entry.target;
-    const target = +el.dataset.target;
-    let start = 0;
-    const duration = 1800;
-    const startTime = performance.now();
-
-    function step(now) {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      // Ease out cubic
-      const eased = 1 - Math.pow(1 - progress, 3);
-      el.textContent = Math.floor(eased * target);
-      if (progress < 1) requestAnimationFrame(step);
-      else el.textContent = target;
-    }
-
     requestAnimationFrame(step);
-    counterObserver.unobserve(el);
+    cntObs.unobserve(el);
   });
-}, { threshold: 0.5 });
-counters.forEach(el => counterObserver.observe(el));
+},{threshold:0.5});
+document.querySelectorAll('.cnt').forEach(el=>cntObs.observe(el));
 </script>
 </body>
 </html>
