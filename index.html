@@ -24,36 +24,10 @@ video::-webkit-media-controls-start-playback-button,
 video::-webkit-media-controls-overlay-play-button{display:none!important;-webkit-appearance:none!important}
 video{pointer-events:none}
 
-/* CURSOR — dot follows mouse instantly; ring lerps behind */
-@media(pointer:fine){
-  body{cursor:none}
-  #cur,#cur-r{display:block}
-}
-#cur{
-  display:none;
-  position:fixed;
-  width:8px;height:8px;
-  background:var(--paper);
-  border-radius:50%;
-  pointer-events:none;
-  z-index:9999;
-  left:-100px;top:-100px;          /* start off-screen so it's invisible until first move */
-  transform:translate(-50%,-50%);
-  transition:width .2s,height .2s,background .2s;
-  will-change:transform,left,top;
-}
-#cur-r{
-  display:none;
-  position:fixed;
-  width:36px;height:36px;
-  border:1px solid rgba(237,237,237,0.25);
-  border-radius:50%;
-  pointer-events:none;
-  z-index:9998;
-  left:-100px;top:-100px;          /* same — start off-screen */
-  transform:translate(-50%,-50%);
-  will-change:left,top;
-}
+/* CURSOR */
+@media(pointer:fine){body{cursor:none}#cur,#cur-r{display:block}}
+#cur{display:none;position:fixed;width:8px;height:8px;background:var(--paper);border-radius:50%;pointer-events:none;z-index:9999;left:-100px;top:-100px;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s;will-change:transform,left,top}
+#cur-r{display:none;position:fixed;width:36px;height:36px;border:1px solid rgba(237,237,237,0.25);border-radius:50%;pointer-events:none;z-index:9998;left:-100px;top:-100px;transform:translate(-50%,-50%);will-change:left,top}
 
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:500;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 48px;height:64px;border-bottom:1px solid var(--rule);background:rgba(11,11,11,0.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
@@ -84,7 +58,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;display:grid;grid-template-c
 /* HERO */
 #hero-track{position:relative;height:600vh}
 #hero-pin{position:sticky;top:0;height:100vh;width:100%;overflow:hidden;display:flex;align-items:flex-end}
-#hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:transform}
 .hero-veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,11,11,.78) 0%,transparent 55%),linear-gradient(to right,rgba(11,11,11,.5) 0%,transparent 60%);z-index:2}
 .hero-grid{position:absolute;inset:0;z-index:2;background-image:linear-gradient(to right,rgba(237,237,237,.025) 1px,transparent 1px),linear-gradient(to bottom,rgba(237,237,237,.025) 1px,transparent 1px);background-size:calc(100%/6) calc(100%/6);pointer-events:none}
 .hero-ui{position:relative;z-index:4;width:100%;padding:0 48px 52px;display:grid;grid-template-columns:1fr auto;align-items:flex-end;gap:40px}
@@ -196,7 +170,7 @@ footer{border-top:1px solid var(--rule2);padding:48px;display:grid;grid-template
 .rv.in{opacity:1;transform:none}
 .rv.d1{transition-delay:.08s}.rv.d2{transition-delay:.18s}.rv.d3{transition-delay:.3s}.rv.d4{transition-delay:.44s}
 
-/* ═══ MOBILE ≤768px ═══ */
+/* MOBILE */
 @media(max-width:768px){
   #hero-track{height:100vh}
   nav{padding:0 20px;height:56px;grid-template-columns:1fr auto}
@@ -242,7 +216,6 @@ footer{border-top:1px solid var(--rule2);padding:48px;display:grid;grid-template
   .foot-bottom{flex-direction:column;gap:8px;align-items:flex-start}
 }
 
-/* Tablet 769–1024px */
 @media(min-width:769px)and(max-width:1024px){
   nav{padding:0 28px}
   .hero-ui{padding:0 28px 48px}
@@ -257,6 +230,7 @@ footer{border-top:1px solid var(--rule2);padding:48px;display:grid;grid-template
   footer{padding:40px 28px}
 }
 </style>
+<base target="_blank">
 </head>
 <body>
 
@@ -400,7 +374,7 @@ footer{border-top:1px solid var(--rule2);padding:48px;display:grid;grid-template
 
 <script>
 /* ─── HAMBURGER ─── */
-const ham    = document.getElementById('nav-ham');
+const ham = document.getElementById('nav-ham');
 const drawer = document.getElementById('nav-drawer');
 ham.addEventListener('click', () => {
   ham.classList.toggle('open');
@@ -415,10 +389,8 @@ drawer.querySelectorAll('a, .drawer-btn').forEach(el => {
 
 /* ─── CURSOR desktop only ─── */
 if (window.matchMedia('(pointer:fine)').matches) {
-  const cur  = document.getElementById('cur');
+  const cur = document.getElementById('cur');
   const curR = document.getElementById('cur-r');
-
-  // Start off-screen; make visible only after first mouse move
   let started = false;
   let mx = -200, my = -200;
   let rx = -200, ry = -200;
@@ -426,109 +398,183 @@ if (window.matchMedia('(pointer:fine)').matches) {
   document.addEventListener('mousemove', e => {
     mx = e.clientX;
     my = e.clientY;
-    // Snap dot to cursor immediately
     cur.style.left = mx + 'px';
-    cur.style.top  = my + 'px';
+    cur.style.top = my + 'px';
     if (!started) {
       started = true;
-      cur.style.opacity  = '1';
+      cur.style.opacity = '1';
       curR.style.opacity = '1';
     }
   });
 
-  // Hide cursor when mouse leaves the window
   document.addEventListener('mouseleave', () => {
-    cur.style.opacity  = '0';
+    cur.style.opacity = '0';
     curR.style.opacity = '0';
   });
   document.addEventListener('mouseenter', () => {
     if (started) {
-      cur.style.opacity  = '1';
+      cur.style.opacity = '1';
       curR.style.opacity = '1';
     }
   });
 
-  // Lerp ring in RAF
   (function raf() {
     rx += (mx - rx) * 0.11;
     ry += (my - ry) * 0.11;
     curR.style.left = rx + 'px';
-    curR.style.top  = ry + 'px';
+    curR.style.top = ry + 'px';
     requestAnimationFrame(raf);
   })();
 
-  // Hover states
   document.querySelectorAll('a, button, .svc-row, .f-card').forEach(el => {
     el.addEventListener('mouseenter', () => {
-      cur.style.width      = '14px';
-      cur.style.height     = '14px';
+      cur.style.width = '14px';
+      cur.style.height = '14px';
       cur.style.background = 'var(--orange)';
     });
     el.addEventListener('mouseleave', () => {
-      cur.style.width      = '8px';
-      cur.style.height     = '8px';
+      cur.style.width = '8px';
+      cur.style.height = '8px';
       cur.style.background = 'var(--paper)';
     });
   });
 }
 
-/* ─── VIDEO ─── */
-const vid   = document.getElementById('hero-vid');
+/* ─── SMOOTH VIDEO SCROLL ─── */
+const vid = document.getElementById('hero-vid');
 const track = document.getElementById('hero-track');
-const bar   = document.getElementById('scrub-bar');
-
+const bar = document.getElementById('scrub-bar');
 const isMobile = window.matchMedia('(max-width:768px)').matches;
 
 if (isMobile) {
+  // Mobile: simple autoplay loop
   vid.setAttribute('autoplay', '');
   vid.setAttribute('loop', '');
   vid.muted = true;
-  const tryPlay = () => { vid.muted = true; vid.play().catch(() => {}); };
-  tryPlay();
-  document.addEventListener('touchstart', tryPlay, { once: true, passive: true });
-
+  vid.play().catch(() => {});
 } else {
-  let targetT  = 0;
-  let currentT = 0;
+  // Desktop: smooth scroll-driven playback
   let duration = 0;
-  const LERP   = 0.07;
+  let targetTime = 0;
+  let currentTime = 0;
+  let isSeeking = false;
+  let rafId = null;
+  let lastScrollY = 0;
 
-  const halt = () => { if (!vid.paused) vid.pause(); };
-  vid.addEventListener('play',    halt);
-  vid.addEventListener('playing', halt);
+  // Faster lerp for more responsive feel (0.15 = good balance)
+  const LERP_FACTOR = 0.15;
+  // Minimum time delta before seeking (reduces unnecessary seeks)
+  const SEEK_THRESHOLD = 0.05;
+  // Frame skip counter to reduce seek frequency
+  let frameCount = 0;
+  const SEEK_EVERY_N_FRAMES = 2;
 
-  const onMeta = () => {
-    duration = vid.duration || 0;
-    try { vid.currentTime = 0; } catch(e) {}
-  };
-  vid.addEventListener('loadedmetadata', onMeta);
-  if (vid.readyState >= 1) onMeta();
+  // Initialize video - force pause and prepare for frame-by-frame
+  vid.pause();
+  vid.muted = true;
+  vid.playsInline = true;
 
-  window.addEventListener('scroll', () => {
-    if (!duration && vid.duration && !isNaN(vid.duration)) duration = vid.duration;
-    const h = track.offsetHeight - window.innerHeight;
-    if (h <= 0) return;
-    const p = Math.max(0, Math.min(1, window.scrollY / h));
-    bar.style.width = (p * 100) + '%';
-    if (duration) targetT = p * duration;
-  }, { passive: true });
-
-  (function loop() {
-    if (!duration && vid.duration && !isNaN(vid.duration)) duration = vid.duration;
-    if (duration) {
-      currentT += (targetT - currentT) * LERP;
-      if (vid.readyState >= 1 && Math.abs(vid.currentTime - currentT) > 0.005) {
-        try { vid.currentTime = currentT; } catch(e) {}
-      }
+  // Get duration once metadata loads
+  const initVideo = () => {
+    if (vid.duration && !isNaN(vid.duration)) {
+      duration = vid.duration;
+      // Jump to start immediately
+      try { vid.currentTime = 0; } catch(e) {}
     }
-    requestAnimationFrame(loop);
-  })();
+  };
+
+  vid.addEventListener('loadedmetadata', initVideo);
+  vid.addEventListener('loadeddata', initVideo);
+  if (vid.readyState >= 1) initVideo();
+
+  // Kill any autoplay attempts
+  vid.addEventListener('play', () => vid.pause());
+  vid.addEventListener('playing', () => vid.pause());
+
+  // Scroll handler - calculate target time only
+  const handleScroll = () => {
+    if (!duration) {
+      if (vid.duration && !isNaN(vid.duration)) duration = vid.duration;
+      else return;
+    }
+
+    const scrollHeight = track.offsetHeight - window.innerHeight;
+    if (scrollHeight <= 0) return;
+
+    const scrollProgress = Math.max(0, Math.min(1, window.scrollY / scrollHeight));
+    targetTime = scrollProgress * duration;
+
+    // Update scrub bar immediately for responsiveness
+    bar.style.width = (scrollProgress * 100) + '%';
+
+    // Start RAF loop if not running
+    if (!rafId) {
+      rafId = requestAnimationFrame(updateVideo);
+    }
+  };
+
+  // RAF update loop - smooth interpolation
+  const updateVideo = () => {
+    frameCount++;
+
+    // Lerp current time toward target
+    const diff = targetTime - currentTime;
+
+    // If difference is significant, lerp closer
+    if (Math.abs(diff) > 0.001) {
+      currentTime += diff * LERP_FACTOR;
+
+      // Only seek video every Nth frame and if change is significant
+      if (frameCount % SEEK_EVERY_N_FRAMES === 0 && 
+          Math.abs(currentTime - vid.currentTime) > SEEK_THRESHOLD &&
+          !isSeeking) {
+
+        isSeeking = true;
+
+        // Use requestVideoFrameCallback if available (Chrome/Edge)
+        if ('requestVideoFrameCallback' in vid) {
+          vid.requestVideoFrameCallback(() => {
+            try {
+              vid.currentTime = currentTime;
+            } catch(e) {}
+            isSeeking = false;
+          });
+        } else {
+          // Fallback: direct seek
+          try {
+            vid.currentTime = currentTime;
+          } catch(e) {}
+          // Small delay before allowing next seek
+          setTimeout(() => { isSeeking = false; }, 16);
+        }
+      }
+
+      // Continue animating
+      rafId = requestAnimationFrame(updateVideo);
+    } else {
+      // Close enough, stop RAF to save battery
+      currentTime = targetTime;
+      rafId = null;
+    }
+  };
+
+  // Passive scroll listener for performance
+  window.addEventListener('scroll', handleScroll, { passive: true });
+
+  // Initial call
+  handleScroll();
+
+  // Handle resize
+  window.addEventListener('resize', handleScroll, { passive: true });
 }
 
 /* ─── REVEAL ─── */
 const rvObs = new IntersectionObserver(entries => {
   entries.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('in'); rvObs.unobserve(e.target); }
+    if (e.isIntersecting) { 
+      e.target.classList.add('in'); 
+      rvObs.unobserve(e.target); 
+    }
   });
 }, { threshold: 0.1 });
 document.querySelectorAll('.rv').forEach(el => rvObs.observe(el));
