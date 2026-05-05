@@ -56,9 +56,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;display:grid;grid-template-c
 #scrub-bar{position:fixed;top:64px;left:0;height:2px;width:0%;background:var(--orange);z-index:600;box-shadow:0 0 10px rgba(224,92,0,.7)}
 
 /* HERO */
-#hero-track{position:relative;height:600vh}
+#hero-track{position:relative;height:1000vh}
 #hero-pin{position:sticky;top:0;height:100vh;width:100%;overflow:hidden;display:flex;align-items:flex-end}
-#hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:transform}
+#hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:transform;image-rendering:auto;image-rendering:high-quality;image-rendering:-webkit-optimize-contrast;backface-visibility:hidden;transform:translateZ(0)}
 .hero-veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,11,11,.78) 0%,transparent 55%),linear-gradient(to right,rgba(11,11,11,.5) 0%,transparent 60%);z-index:2}
 .hero-grid{position:absolute;inset:0;z-index:2;background-image:linear-gradient(to right,rgba(237,237,237,.025) 1px,transparent 1px),linear-gradient(to bottom,rgba(237,237,237,.025) 1px,transparent 1px);background-size:calc(100%/6) calc(100%/6);pointer-events:none}
 .hero-ui{position:relative;z-index:4;width:100%;padding:0 48px 52px;display:grid;grid-template-columns:1fr auto;align-items:flex-end;gap:40px}
@@ -461,35 +461,29 @@ if (isMobile) {
     setFrame(mi);
   }, 1000 / 24);
 } else {
-  let targetFrame = 1;
-  let displayFrame = 1;
-  let rafId = null;
+  let pending = false;
+  const trackTop = () => track.offsetTop;
 
-  const tick = () => {
-    const diff = targetFrame - displayFrame;
-    if (Math.abs(diff) > 0.05) {
-      displayFrame += diff * 0.18;
-      setFrame(Math.round(displayFrame));
-      rafId = requestAnimationFrame(tick);
-    } else {
-      displayFrame = targetFrame;
-      setFrame(Math.round(displayFrame));
-      rafId = null;
-    }
+  const render = () => {
+    pending = false;
+    const start = trackTop();
+    const scrollHeight = track.offsetHeight - window.innerHeight;
+    if (scrollHeight <= 0) return;
+    const p = Math.max(0, Math.min(1, (window.scrollY - start) / scrollHeight));
+    setFrame(Math.round(1 + p * (FRAME_COUNT - 1)));
+    bar.style.width = (p * 100) + '%';
   };
 
   const handleScroll = () => {
-    const scrollHeight = track.offsetHeight - window.innerHeight;
-    if (scrollHeight <= 0) return;
-    const p = Math.max(0, Math.min(1, window.scrollY / scrollHeight));
-    targetFrame = 1 + p * (FRAME_COUNT - 1);
-    bar.style.width = (p * 100) + '%';
-    if (!rafId) rafId = requestAnimationFrame(tick);
+    if (!pending) {
+      pending = true;
+      requestAnimationFrame(render);
+    }
   };
 
   window.addEventListener('scroll', handleScroll, { passive: true });
   window.addEventListener('resize', handleScroll, { passive: true });
-  handleScroll();
+  render();
 }
 
 /* ─── REVEAL ─── */
