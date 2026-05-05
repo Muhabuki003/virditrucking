@@ -58,7 +58,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;display:grid;grid-template-c
 /* HERO */
 #hero-track{position:relative;height:1000vh}
 #hero-pin{position:sticky;top:0;height:100vh;width:100%;overflow:hidden;display:flex;align-items:flex-end}
-#hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:transform;image-rendering:auto;image-rendering:high-quality;image-rendering:-webkit-optimize-contrast;backface-visibility:hidden;transform:translateZ(0)}
+#hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:transform;image-rendering:auto;image-rendering:high-quality;image-rendering:-webkit-optimize-contrast;backface-visibility:hidden;transform:translateZ(0);filter:contrast(1.06) saturate(1.08) brightness(1.02)}
 .hero-veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,11,11,.78) 0%,transparent 55%),linear-gradient(to right,rgba(11,11,11,.5) 0%,transparent 60%);z-index:2}
 .hero-grid{position:absolute;inset:0;z-index:2;background-image:linear-gradient(to right,rgba(237,237,237,.025) 1px,transparent 1px),linear-gradient(to bottom,rgba(237,237,237,.025) 1px,transparent 1px);background-size:calc(100%/6) calc(100%/6);pointer-events:none}
 .hero-ui{position:relative;z-index:4;width:100%;padding:0 48px 52px;display:grid;grid-template-columns:1fr auto;align-items:flex-end;gap:40px}
@@ -264,7 +264,7 @@ footer{border-top:1px solid var(--rule2);padding:48px;display:grid;grid-template
 
 <section id="hero-track">
   <div id="hero-pin">
-    <img id="hero-vid" src="ezgif-frame-001.jpg" alt="" draggable="false" />
+    <img id="hero-vid" src="ezgif-frame-001.jpg" alt="" draggable="false" decoding="async" fetchpriority="high" />
     <div class="hero-veil"></div>
     <div class="hero-grid"></div>
     <div class="hero-ui">
@@ -437,7 +437,9 @@ const track = document.getElementById('hero-track');
 const bar = document.getElementById('scrub-bar');
 const isMobile = window.matchMedia('(max-width:768px)').matches;
 
-const FRAME_COUNT = 100;
+const FRAME_COUNT = 240;
+const VH_PER_FRAME = 8;
+track.style.height = (FRAME_COUNT * VH_PER_FRAME) + 'vh';
 const framePath = i => `ezgif-frame-${String(i).padStart(3,'0')}.jpg`;
 const frames = [];
 for (let i = 1; i <= FRAME_COUNT; i++) {
